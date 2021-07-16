@@ -8,23 +8,17 @@ import 'package:flutter/services.dart';
 /// For Android: The path is <code>/{album name}/{image name}</code>.
 /// For iOS: The path can't obtain, the image saved to a new album with name you given.
 class ImageSave {
-  static const MethodChannel _channel = const MethodChannel('image_save');
+  static const MethodChannel _channel = MethodChannel('image_save');
 
   /// Save Image to album.
   /// [imageData] Image data.
   /// [imageName] Only works on Android. Image name, such as a.jpg, b.gif and so on.
   /// [albumName] Album name, optional. For Android, default application name. For iOS, default system album.
   /// [overwriteSameNameFile] Only works on Android. If <code>true</code>, overwrite the original file that has same name, default <code>true</code>.
-  static Future<bool> saveImage(Uint8List imageData, String imageName,
-      {String albumName, overwriteSameNameFile = true}) async {
+  static Future<bool> saveImage(Uint8List imageData, String imageName, {String? albumName, overwriteSameNameFile = true}) async {
     bool success = false;
     try {
-      success = await _channel.invokeMethod('saveImage', {
-        "imageData": imageData,
-        "imageName": imageName,
-        "albumName": albumName,
-        "overwriteSameNameFile": overwriteSameNameFile
-      });
+      success = await _channel.invokeMethod('saveImage', {"imageData": imageData, "imageName": imageName, "albumName": albumName, "overwriteSameNameFile": overwriteSameNameFile});
     } on PlatformException {
       rethrow;
     }
@@ -37,12 +31,10 @@ class ImageSave {
   /// For iOS, the full path is <code>${NSDocumentDirectory}/Pictures/[imageName]</code>, not support dynamic images.
   /// [imageData] Image data.
   /// [imageName] Image name,contains extension, such as "demo.png".
-  static Future<bool> saveImageToSandbox(
-      Uint8List imageData, String imageName) async {
+  static Future<bool> saveImageToSandbox(Uint8List imageData, String imageName) async {
     bool success = false;
     try {
-      success = await _channel.invokeMethod('saveImageToSandbox',
-          {"imageData": imageData, "imageName": imageName});
+      success = await _channel.invokeMethod('saveImageToSandbox', {"imageData": imageData, "imageName": imageName});
     } on PlatformException {
       rethrow;
     }
@@ -53,7 +45,7 @@ class ImageSave {
   static Future<List<Uint8List>> getImagesFromSandbox() async {
     List<Uint8List> images = [];
     try {
-      images = await _channel.invokeListMethod("getImagesFromSandbox");
+      images = (await _channel.invokeListMethod("getImagesFromSandbox"))!;
     } on PlatformException {
       rethrow;
     }
